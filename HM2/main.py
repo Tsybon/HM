@@ -41,3 +41,30 @@ def simple_calculator(operation, a, b):
 # print(simple_calculator('-', 5,3))
 # print(simple_calculator('*', 5,3))
 # print(simple_calculator('/', 10,0))
+
+import time
+
+def retry(func):
+    def wrapper(*args, **kwargs):
+        attempts = 0
+        while attempts < 3:
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                attempts += 1
+                print(f"Attempt {attempts} failed with error: {e}")
+                if attempts == 3:
+                    print("Max retries reached. Function failed.")
+                    raise e
+                time.sleep(1)  # Adding a short delay before retrying
+    return wrapper
+
+@retry
+def example(threshold):
+    from random import random
+    if random() <= threshold:
+        raise Exception("Random failure")
+    print("Function succeeded")
+
+# example(0.9) # fail in 9 out of 10 cases
+# example(0.5) # fail in 5 out of 10 cases
